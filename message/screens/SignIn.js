@@ -35,13 +35,13 @@ const SignIn = () => {
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TextInput 
           style={styles.input} 
-          placeholder="E-mail adresini giriniz" 
+          placeholder="Enter your email" 
           value={email} 
           onChangeText={text => setEmail(text)} 
         />
         <TextInput 
           style={styles.input} 
-          placeholder="Şifrenizi giriniz" 
+          placeholder="Enter your password" 
           value={password} 
           onChangeText={text => setPassword(text)} 
           secureTextEntry={true} 
@@ -55,7 +55,37 @@ const SignIn = () => {
   );
 };
 
-
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  title: {
+    marginTop: 30,
+    marginBottom: 16,
+    fontSize: 36,
+    fontWeight: "800",
+  },
+  contentContainer: {
+    padding: 42,
+  },
+  input: {
+    backgroundColor: "white",
+    fontSize: 13,
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 6,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 32,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 10,
+  }
 });
 
 export default SignIn;
