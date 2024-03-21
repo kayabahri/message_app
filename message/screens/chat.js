@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { doc, onSnapshot, updateDoc, arrayUnion } from 'firebase/firestore';
-import { firestore, auth } from '../firebaseConfig'; 
+
 
 const Chat = ({ route }) => {
   const [messages, setMessages] = useState([]);
