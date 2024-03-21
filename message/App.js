@@ -9,7 +9,6 @@ import Settings from "./screens/Settings";
 import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
 
-
 const Tabs = createBottomTabNavigator();
 
 const ChatsStack = createStackNavigator();
@@ -57,5 +56,10 @@ const App = () => {
     </NavigationContainer>
   );
 };
+
+// AppRegistry.registerComponent çağrısını buraya taşıyın
+import { AppRegistry } from 'react-native';
+import { name as appName } from './app.json';
+AppRegistry.registerComponent('message', () => App);
 
 export default App;

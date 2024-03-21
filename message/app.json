@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.Messaging"
+      "package": "com.talkkora"
     },
     "web": {
       "favicon": "./assets/favicon.png"
