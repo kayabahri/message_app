@@ -9,10 +9,10 @@ import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
 import "./firebaseConfig";
 import Chat from "./screens/Chat";
-import Gun from "gun";
 
 
-const gun = Gun(['http://localhost:8080/gun']);
+
+
 const Tabs = createBottomTabNavigator();
 
 const ChatsStack = createStackNavigator();
