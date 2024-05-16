@@ -9,15 +9,17 @@ import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
 import Chat from "./screens/Chat";
 import "./firebaseConfig";
+import { getAuth } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
 
 const Tabs = createBottomTabNavigator();
 
 const ChatsStack = createStackNavigator();
 const ChatsScreen = () => (
   <ChatsStack.Navigator>
-    <ChatsStack.Screen name="ChatsTab" component={Chats} options={{ headerShown: false }} />
-    <ChatsStack.Screen name="Chat" component={Chat} />
-  </ChatsStack.Navigator>
+  <ChatsStack.Screen name="ChatsTab" component={Chats} options={{ headerShown: false }} />
+  <ChatsStack.Screen name="Chat" component={Chat} />
+</ChatsStack.Navigator>
 );
 
 const SettingsStack = createStackNavigator();

@@ -5,17 +5,26 @@ import { auth, firestore } from '../firebaseConfig';
 import { collection, onSnapshot, addDoc, query, where } from 'firebase/firestore';
 import { Ionicons } from "@expo/vector-icons";
 import EmailPromptModal from './Modals';
-
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    if (auth.currentUser) {
+    const unsubscribeAuth = onAuthStateChanged(auth, user => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
       const chatsQuery = query(
         collection(firestore, "chats"),
-        where("users", "array-contains", auth.currentUser.email)
+        where("users", "array-contains", currentUser.email)
       );
 
       const unsubscribe = onSnapshot(chatsQuery, snapshot => {
@@ -30,11 +39,11 @@ const Chats = ({ navigation }) => {
         setChats(loadedChats);
       });
 
-      return () => unsubscribe(); 
+      return () => unsubscribe();
     } else {
       navigation.navigate("SignUp");
     }
-  }, [auth.currentUser]);
+  }, [currentUser]);
 
   const handleFABPress = () => {
     setIsModalVisible(true);
@@ -45,17 +54,19 @@ const Chats = ({ navigation }) => {
   };
 
   const handleEmailSubmit = async (email) => {
-    try {
-      const chatRef = collection(firestore, "chats");
-      const docRef = await addDoc(chatRef, {
-        users: [auth.currentUser.email, email],
-        messages: [],
-      });
+    if (currentUser) {
+      try {
+        const chatRef = collection(firestore, "chats");
+        const docRef = await addDoc(chatRef, {
+          users: [currentUser.email, email],
+          messages: [],
+        });
 
-      navigation.navigate("Chat", { id: docRef.id });
-    } catch (error) {
-      console.error("Error creating chat: ", error);
-      Alert.alert("Error", "An error occurred while creating the chat.");
+        navigation.navigate("Chat", { id: docRef.id });
+      } catch (error) {
+        console.error("Error creating chat: ", error);
+        Alert.alert("Error", "An error occurred while creating the chat.");
+      }
     }
   };
 
@@ -64,7 +75,7 @@ const Chats = ({ navigation }) => {
       {chats.map(chat => (
         <ContactRow
           key={chat.id}
-          name={chat.users.find(u => u !== auth.currentUser.email)}
+          name={chat.users.find(u => u !== currentUser?.email)}
           subtitle={chat.lastMessage.text || "No messages yet."}
           onPress={() => navigation.navigate("Chat", { id: chat.id })}
         />

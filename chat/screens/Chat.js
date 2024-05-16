@@ -2,27 +2,38 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { doc, onSnapshot, updateDoc, arrayUnion } from 'firebase/firestore';
 import { firestore, auth } from '../firebaseConfig'; 
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Chat = ({ route }) => {
   const [messages, setMessages] = useState([]);
-  const currentUser = auth.currentUser; // Kullanıcı bilgisi
+  const [currentUser, setCurrentUser] = useState(null); // currentUser durumunu useState ile yönet
 
   useEffect(() => {
-    const chatDocRef = doc(firestore, 'chats', route.params.id);
-    const unsubscribe = onSnapshot(chatDocRef, docSnapshot => {
-      if (docSnapshot.exists()) {
-        const data = docSnapshot.data();
-        setMessages(
-          data.messages.map(m => ({
-            ...m,
-            createdAt: m.createdAt.toDate(),
-          }))
-        );
-      }
+    const unsubscribeAuth = onAuthStateChanged(auth, user => {
+      setCurrentUser(user); // Kullanıcı durumu değiştiğinde currentUser'ı güncelle
     });
 
-    return unsubscribe; // Cleanup function
-  }, [route.params.id]);
+    return unsubscribeAuth; // Cleanup function for auth state change
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      const chatDocRef = doc(firestore, 'chats', route.params.id);
+      const unsubscribe = onSnapshot(chatDocRef, docSnapshot => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          setMessages(
+            data.messages.map(m => ({
+              ...m,
+              createdAt: m.createdAt.toDate(),
+            }))
+          );
+        }
+      });
+
+      return unsubscribe; // Cleanup function for chat snapshot
+    }
+  }, [route.params.id, currentUser]);
 
   const onSend = useCallback(
     async (m = []) => {
